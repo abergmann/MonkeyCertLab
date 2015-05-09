@@ -110,164 +110,251 @@ gen_ocsp_responder () {
 }
 
 create_openssl_conf_orig () {
-	cat << EOF | uudecode
-begin-base64 644 openssl.cnf.orig
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjCiMgT3BlblNTTCBjb25maWcgVGVtcGxhdGUKIyBsYXN0IG1v
-ZGlmaWNhdGlvbjogMjAxMy0wOC0xNQojIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKIwojICtDQQojICB8
-CiMgICstLSB1c2VyIGNlcnRpZmljYXRlcwojICArLS0gc2VydmVyIGNlcnRp
-ZmljYXRlcwojICArLS0gb2NzcF9yZXNwb25kZXIgY2VydGlmaWNhdGVzCiMK
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjCgpTU0wJCQkJPSBDQVBXRApSQU5ERklMRQkJCT0gJFNTTC9E
-T00vcHJpdmF0ZS8ucmFuZAoKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjClsgY2EgXQpkZWZhdWx0X2Nh
-IAkJCT0gdXNlcgoKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjClsgdXNlciBdCgpkaXIJCQkJPSAkU1NM
-L0RPTQpjZXJ0cwkJCQk9ICRkaXIvY2VydHMKY3JsX2RpcgkJCQk9ICRkaXIv
-Y3JsCmRhdGFiYXNlCQkJPSAkZGlyL2luZGV4LnR4dApuZXdfY2VydHNfZGly
-IAkJCT0gJGRpci9uZXdjZXJ0cwoKY2VydGlmaWNhdGUgCQkJPSAkZGlyL2Nh
-Y2VydC5wZW0Kc2VyaWFsIAkJCQk9ICRkaXIvc2VyaWFsCmNybCAJCQkJPSAk
-ZGlyL2NybC5wZW0KcHJpdmF0ZV9rZXkgCQkJPSAkZGlyL3ByaXZhdGUvY2Fr
-ZXkucGVtCgp4NTA5X2V4dGVuc2lvbnMJCQk9IHVzZXJfZXh0CgpkZWZhdWx0
-X2RheXMJCQk9IDM2NQpkZWZhdWx0X2NybF9kYXlzCQk9IDcKZGVmYXVsdF9t
-ZAkJCT0gc2hhMQpwcmVzZXJ2ZQkJCT0gbm8KCnBvbGljeQkJCQk9IHBvbGlj
-eV9tYXRjaAoKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjClsgc2VydmVyIF0KCmRpcgkJCQk9ICRTU0wv
-RE9NCmNlcnRzCQkJCT0gJGRpci9jZXJ0cwpjcmxfZGlyCQkJCT0gJGRpci9j
-cmwKZGF0YWJhc2UJCQk9ICRkaXIvaW5kZXgudHh0Cm5ld19jZXJ0c19kaXIg
-CQkJPSAkZGlyL25ld2NlcnRzCgpjZXJ0aWZpY2F0ZSAJCQk9ICRkaXIvY2Fj
-ZXJ0LnBlbQpzZXJpYWwgCQkJCT0gJGRpci9zZXJpYWwKY3JsIAkJCQk9ICRk
-aXIvY3JsLnBlbQpwcml2YXRlX2tleSAJCQk9ICRkaXIvcHJpdmF0ZS9jYWtl
-eS5wZW0KCng1MDlfZXh0ZW5zaW9ucwkJCT0gc2VydmVyX2V4dAoKZGVmYXVs
-dF9kYXlzCQkJPSAzNjUKZGVmYXVsdF9jcmxfZGF5cwkJPSA3CmRlZmF1bHRf
-bWQJCQk9IHNoYTEKcHJlc2VydmUJCQk9IG5vCgpwb2xpY3kJCQkJPSBwb2xp
-Y3lfbWF0Y2gKCiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIwpbIG9jc3BfcmVzcG9uZGVyIF0KCmRpcgkJ
-CQk9ICRTU0wvRE9NCmNlcnRzCQkJCT0gJGRpci9jZXJ0cwpjcmxfZGlyCQkJ
-CT0gJGRpci9jcmwKZGF0YWJhc2UJCQk9ICRkaXIvaW5kZXgudHh0Cm5ld19j
-ZXJ0c19kaXIgCQkJPSAkZGlyL25ld2NlcnRzCgpjZXJ0aWZpY2F0ZSAJCQk9
-ICRkaXIvY2FjZXJ0LnBlbQpzZXJpYWwgCQkJCT0gJGRpci9zZXJpYWwKY3Js
-IAkJCQk9ICRkaXIvY3JsLnBlbQpwcml2YXRlX2tleSAJCQk9ICRkaXIvcHJp
-dmF0ZS9jYWtleS5wZW0KCng1MDlfZXh0ZW5zaW9ucwkJCT0gb2NzcF9yZXNw
-b25kZXJfZXh0CgpkZWZhdWx0X2RheXMgCQkJPSAzNjUKZGVmYXVsdF9jcmxf
-ZGF5cwkJPSA3CmRlZmF1bHRfbWQJCQk9IG1kNQpwcmVzZXJ2ZQkJCT0gbm8K
-CnBvbGljeSAJCQkJPSBwb2xpY3lfbWF0Y2gKCiMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwpbIHN5bWJp
-YW4gXQpkaXIJCQkJPSAkU1NML0RPTQpjZXJ0cwkJCQk9ICRkaXIvY2VydHMK
-Y3JsX2RpcgkJCQk9ICRkaXIvY3JsCmRhdGFiYXNlCQkJPSAkZGlyL2luZGV4
-LnR4dApuZXdfY2VydHNfZGlyIAkJCT0gJGRpci9uZXdjZXJ0cwoKY2VydGlm
-aWNhdGUgCQkJPSAkZGlyL2NhY2VydC5wZW0Kc2VyaWFsIAkJCQk9ICRkaXIv
-c2VyaWFsCmNybCAJCQkJPSAkZGlyL2NybC5wZW0KcHJpdmF0ZV9rZXkgCQkJ
-PSAkZGlyL3ByaXZhdGUvY2FrZXkucGVtCgp4NTA5X2V4dGVuc2lvbnMgICAg
-ICAgICAgICAgICAgID0gc3ltX2V4dAoKZGVmYXVsdF9kYXlzCQkJPSAzNjUK
-ZGVmYXVsdF9jcmxfZGF5cwkJPSA3CmRlZmF1bHRfbWQgICAgICAgICAgICAg
-ICAgICAgICAgPSBzaGExCnByZXNlcnZlICAgICAgICAgICAgICAgICAgICAg
-ICAgPSBubwoKcG9saWN5ICAgICAgICAgICAgICAgICAgICAgICAgICA9IHBv
-bGljeV9tYXRjaAoKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjClsgeDUwOXYzX0ZRRE4gXQpzdWJqZWN0
-QWx0TmFtZT1ETlM6RE9NCgojIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKWyBwb2xpY3lfbWF0Y2ggXQpj
-b3VudHJ5TmFtZQkJCT0gbWF0Y2gKc3RhdGVPclByb3ZpbmNlTmFtZQkJPSBt
-YXRjaApvcmdhbml6YXRpb25OYW1lCQk9IG1hdGNoCm9yZ2FuaXphdGlvbmFs
-VW5pdE5hbWUJCT0gb3B0aW9uYWwKY29tbW9uTmFtZQkJCT0gc3VwcGxpZWQK
-ZW1haWxBZGRyZXNzCQkJPSBvcHRpb25hbAoKIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjClsgcmVxIF0K
-ZGVmYXVsdF9iaXRzCQkJPSA0MDk2CmRlZmF1bHRfa2V5ZmlsZQkJCT0gcHJp
-dmtleS5wZW0KZGlzdGluZ3Vpc2hlZF9uYW1lCQk9IHJlcV9kaXN0aW5ndWlz
-aGVkX25hbWUKYXR0cmlidXRlcwkJCT0gcmVxX2F0dHJpYnV0ZXMKeDUwOV9l
-eHRlbnNpb25zCQkJPSB2M19jYQoKc3RyaW5nX21hc2sJCQk9IG5vbWJzdHIK
-CiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIwpbIHJlcV9kaXN0aW5ndWlzaGVkX25hbWUgXQpjb3VudHJ5
-TmFtZQkJCT0gQ291bnRyeSBOYW1lICgyIGxldHRlciBjb2RlKQpjb3VudHJ5
-TmFtZV9kZWZhdWx0CQk9IERFCmNvdW50cnlOYW1lX21pbgkJCT0gMgpjb3Vu
-dHJ5TmFtZV9tYXgJCQk9IDIKCnN0YXRlT3JQcm92aW5jZU5hbWUgICAgICAg
-ICAgICAgPSBTdGF0ZSBvciBQcm92aW5jZSBOYW1lIChmdWxsIG5hbWUpCnN0
-YXRlT3JQcm92aW5jZU5hbWVfZGVmYXVsdCAgICAgPSBOb3JkcmhlaW4tV2Vz
-dGZhbGVuCgowLm9yZ2FuaXphdGlvbk5hbWUJCT0gT3JnYW5pemF0aW9uIE5h
-bWUgKGVnLCBjb21wYW55KQowLm9yZ2FuaXphdGlvbk5hbWVfZGVmYXVsdAk9
-IE9SRwoKI29yZ2FuaXphdGlvbmFsVW5pdE5hbWUgICAgICAgICAgPSBPcmdh
-bml6YXRpb25hbCBVbml0IE5hbWUgKGVnLCBzZWN0aW9uKQojb3JnYW5pemF0
-aW9uYWxVbml0TmFtZV9kZWZhdWx0ICA9IE1pbmlzdHJ5IG9mIFRydXRoCgpj
-b21tb25OYW1lCQkJPSBDb21tb24gTmFtZSAoZWcsIFlPVVIgbmFtZSkKY29t
-bW9uTmFtZV9tYXgJCQk9IDY0CmNvbW1vbk5hbWVfZGVmYXVsdAkJPSBST09U
-IENBIENlcnRpZmljYXRlCgplbWFpbEFkZHJlc3MJCQk9IEVtYWlsIEFkZHJl
-c3MKZW1haWxBZGRyZXNzX21heAkJPSA0MAplbWFpbEFkZHJlc3NfZGVmYXVs
-dAkJPSByb290Y2FARE9NCgojIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKWyByZXFfYXR0cmlidXRlcyBd
-CiMgbm90aGluZyA7LSkKCiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwpbIG9jc3BfcmVzcG9uZGVyX2V4
-dCBdCgojIFRoZXNlIGV4dGVuc2lvbnMgYXJlIGFkZGVkIHdoZW4gYSBvY3Nw
-LXNlcnZlciBjZXJ0aWZpY2F0ZSBpcyBpc3N1ZWQKa2V5VXNhZ2UJCQk9IGRp
-Z2l0YWxTaWduYXR1cmUsIGtleUVuY2lwaGVybWVudCwga2V5QWdyZWVtZW50
-CmV4dGVuZGVkS2V5VXNhZ2UJCT0gT0NTUFNpZ25pbmcKc3ViamVjdEtleUlk
-ZW50aWZpZXIJCT0gaGFzaAphdXRob3JpdHlLZXlJZGVudGlmaWVyCQk9IGtl
-eWlkLGlzc3VlcjphbHdheXMKc3ViamVjdEFsdE5hbWUJCQk9IGVtYWlsOmNv
-cHkKaXNzdWVyQWx0TmFtZQkJCT0gaXNzdWVyOmNvcHkKY3JsRGlzdHJpYnV0
-aW9uUG9pbnRzICAgCT0gVVJJOmh0dHA6Ly9jcmwuRE9NCm5zQ2VydFR5cGUJ
-CQk9IHNlcnZlcgpuc0NvbW1lbnQJCQk9ICJUaGlzIGlzIGEgT0NTUCB0ZXN0
-IGNlcnRpZmljYXRlISIKCiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwpbIHVzZXJfZXh0IF0KCiMgVGhl
-c2UgZXh0ZW5zaW9ucyBhcmUgYWRkZWQgd2hlbiBhIHVzZXIgY2VydGlmaWNh
-dGUgaXMgaXNzdWVkCmtleVVzYWdlCQkJPSBkaWdpdGFsU2lnbmF0dXJlLCBu
-b25SZXB1ZGlhdGlvbiwga2V5RW5jaXBoZXJtZW50LCBkYXRhRW5jaXBoZXJt
-ZW50CmV4dGVuZGVkS2V5VXNhZ2UJCT0gY2xpZW50QXV0aCwgZW1haWxQcm90
-ZWN0aW9uLCAxLjMuNi4xLjQuMS4zMTEuMjAuMi4yCnN1YmplY3RLZXlJZGVu
-dGlmaWVyCQk9IGhhc2gKYXV0aG9yaXR5S2V5SWRlbnRpZmllcgkJPSBrZXlp
-ZCxpc3N1ZXI6YWx3YXlzCnN1YmplY3RBbHROYW1lCQkJPSBlbWFpbDpjb3B5
-Cmlzc3VlckFsdE5hbWUJCQk9IGlzc3Vlcjpjb3B5CmNybERpc3RyaWJ1dGlv
-blBvaW50cwkJPSBVUkk6aHR0cDovL2NybC5ET00KbnNDZXJ0VHlwZQkJCT0g
-Y2xpZW50LCBlbWFpbApuc0NvbW1lbnQJCQk9ICJUaGlzIGlzIGEgVVNFUiB0
-ZXN0IGNlcnRpZmljYXRlISIKYXV0aG9yaXR5SW5mb0FjY2VzcwkJPSBPQ1NQ
-O1VSSTpodHRwOi8vb2NzcC5ET00KCiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwpbIHNlcnZlcl9leHQg
-XQoKIyBUaGVzZSBleHRlbnNpb25zIGFyZSBhZGRlZCB3aGVuIGEgc2VydmVy
-IGNlcnRpZmljYXRlIGlzIGlzc3VlZAprZXlVc2FnZQkJCT0gZGlnaXRhbFNp
-Z25hdHVyZSwga2V5RW5jaXBoZXJtZW50LCBrZXlBZ3JlZW1lbnQKZXh0ZW5k
-ZWRLZXlVc2FnZQkJPSBzZXJ2ZXJBdXRoCnN1YmplY3RLZXlJZGVudGlmaWVy
-CQk9IGhhc2gKYXV0aG9yaXR5S2V5SWRlbnRpZmllcgkJPSBrZXlpZCxpc3N1
-ZXI6YWx3YXlzCnN1YmplY3RBbHROYW1lCQkJPSBlbWFpbDpjb3B5Cmlzc3Vl
-ckFsdE5hbWUJCQk9IGlzc3Vlcjpjb3B5CmNybERpc3RyaWJ1dGlvblBvaW50
-cyAgIAk9IFVSSTpodHRwOi8vY3JsLkRPTQpuc0NlcnRUeXBlCQkJPSBzZXJ2
-ZXIKbnNDb21tZW50CQkJPSAiVGhpcyBpcyBhIFNFUlZFUiB0ZXN0IGNlcnRp
-ZmljYXRlISIKYXV0aG9yaXR5SW5mb0FjY2VzcwkJPSBPQ1NQO1VSSTpodHRw
-Oi8vb2NzcC5ET00KCiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIwpbIHN5bV9leHQgXQprZXlVc2FnZSAg
-ICAgICAgICAgICAgICAgICAgICAgID0gZGlnaXRhbFNpZ25hdHVyZSwgbm9u
-UmVwdWRpYXRpb24sIGtleUVuY2lwaGVybWVudCwgZGF0YUVuY2lwaGVybWVu
-dApleHRlbmRlZEtleVVzYWdlICAgICAgICAgICAgICAgID0gY2xpZW50QXV0
-aCwgZW1haWxQcm90ZWN0aW9uCnN1YmplY3RLZXlJZGVudGlmaWVyICAgICAg
-ICAgICAgPSBoYXNoCmF1dGhvcml0eUtleUlkZW50aWZpZXIgICAgICAgICAg
-PSBrZXlpZCxpc3N1ZXI6YWx3YXlzCnN1YmplY3RBbHROYW1lICAgICAgICAg
-ICAgICAgICAgPSBlbWFpbDpjb3B5Cmlzc3VlckFsdE5hbWUgICAgICAgICAg
-ICAgICAgICAgPSBpc3N1ZXI6Y29weQpjcmxEaXN0cmlidXRpb25Qb2ludHMg
-ICAgICAgICAgID0gVVJJOmh0dHA6Ly9jcmwuRE9NCm5zQ2VydFR5cGUgICAg
-ICAgICAgICAgICAgICAgICAgPSBjbGllbnQsIGVtYWlsLCBvYmpzaWduCm5z
-Q29tbWVudCAgICAgICAgICAgICAgICAgICAgICAgPSAiTW9ua2V5IExhYm9y
-YXRvcnkgQ2VydGlmaWNhdGUiCmF1dGhvcml0eUluZm9BY2Nlc3MgICAgICAg
-ICAgICAgPSBPQ1NQO1VSSTpodHRwOi8vb2NzcC5ET00KbnNDYVBvbGljeVVy
-bCAgICAgICAgICAgICAgICAgICA9IGh0dHA6Ly9ET00vc3NsL3BvbGljeS5o
-dG1sCgoKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjClsgdjNfY2EgXQoKIyBUaGVzZSBleHRlbnNpb25z
-IGFyZSBhZGRlZCB3aGVuICdSb290Q0EnIF9zaWduc18gaXRzZWxmLgpiYXNp
-Y0NvbnN0cmFpbnRzCQk9IGNyaXRpY2FsLCBDQTpUUlVFCmtleVVzYWdlCQkJ
-PSBjUkxTaWduLCBrZXlDZXJ0U2lnbiwga2V5RW5jaXBoZXJtZW50LCBub25S
-ZXB1ZGlhdGlvbiwgZGlnaXRhbFNpZ25hdHVyZQpzdWJqZWN0S2V5SWRlbnRp
-ZmllcgkJPSBoYXNoCmF1dGhvcml0eUtleUlkZW50aWZpZXIJCT0ga2V5aWQs
-aXNzdWVyOmFsd2F5cwpzdWJqZWN0QWx0TmFtZQkJCT0gZW1haWw6Y29weQpp
-c3N1ZXJBbHROYW1lCQkJPSBpc3N1ZXI6Y29weQpjcmxEaXN0cmlidXRpb25Q
-b2ludHMJCT0gVVJJOmh0dHA6Ly9jcmwuRE9NCm5zQ2VydFR5cGUJCQk9IHNz
-bENBLCBlbWFpbENBLCBvYmpDQQpuc0NvbW1lbnQJCQk9ICJUaGlzIGEgQ0Eg
-cm9vdCB0ZXN0IGNlcnRpZmljYXRlISIKYXV0aG9yaXR5SW5mb0FjY2VzcwkJ
-PSBPQ1NQO1VSSTpodHRwOi8vb2NzcC5ET00KCiMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwpbIGNybF9l
-eHQgXQoKIyBDUkwgZXh0ZW5zaW9ucy4KIyBPbmx5IGlzc3VlckFsdE5hbWUg
-YW5kIGF1dGhvcml0eUtleUlkZW50aWZpZXIgbWFrZSBhbnkgc2Vuc2UgaW4g
-YSBDUkwuCmlzc3VlckFsdE5hbWUJCQk9IGlzc3Vlcjpjb3B5CmF1dGhvcml0
-eUtleUlkZW50aWZpZXIJCT0ga2V5aWQ6YWx3YXlzLGlzc3VlcjphbHdheXMK
-Cg==
-====
-E
+	cat > openssl.cnf.orig << EOF
+######################################################
+# OpenSSL config Template
+# last modification: 2013-08-15
+######################################################
+#
+# +CA
+#  |
+#  +-- user certificates
+#  +-- server certificates
+#  +-- ocsp_responder certificates
+#
+######################################################
+
+SSL				= CAPWD
+RANDFILE			= \$SSL/DOM/private/.rand
+
+######################################################
+[ ca ]
+default_ca 			= user
+
+######################################################
+[ user ]
+
+dir				= \$SSL/DOM
+certs				= \$dir/certs
+crl_dir				= \$dir/crl
+database			= \$dir/index.txt
+new_certs_dir 			= \$dir/newcerts
+
+certificate 			= \$dir/cacert.pem
+serial 				= \$dir/serial
+crl 				= \$dir/crl.pem
+private_key 			= \$dir/private/cakey.pem
+
+x509_extensions			= user_ext
+
+default_days			= 365
+default_crl_days		= 7
+default_md			= sha512
+preserve			= no
+
+policy				= policy_match
+
+######################################################
+[ server ]
+
+dir				= \$SSL/DOM
+certs				= \$dir/certs
+crl_dir				= \$dir/crl
+database			= \$dir/index.txt
+new_certs_dir 			= \$dir/newcerts
+
+certificate 			= \$dir/cacert.pem
+serial 				= \$dir/serial
+crl 				= \$dir/crl.pem
+private_key 			= \$dir/private/cakey.pem
+
+x509_extensions			= server_ext
+
+default_days			= 365
+default_crl_days		= 7
+default_md			= sha512
+preserve			= no
+
+policy				= policy_match
+
+######################################################
+[ ocsp_responder ]
+
+dir				= \$SSL/DOM
+certs				= \$dir/certs
+crl_dir				= \$dir/crl
+database			= \$dir/index.txt
+new_certs_dir 			= \$dir/newcerts
+
+certificate 			= \$dir/cacert.pem
+serial 				= \$dir/serial
+crl 				= \$dir/crl.pem
+private_key 			= \$dir/private/cakey.pem
+
+x509_extensions			= ocsp_responder_ext
+
+default_days 			= 365
+default_crl_days		= 7
+default_md			= sha512
+preserve			= no
+
+policy 				= policy_match
+
+######################################################
+[ symbian ]
+dir				= \$SSL/DOM
+certs				= \$dir/certs
+crl_dir				= \$dir/crl
+database			= \$dir/index.txt
+new_certs_dir 			= \$dir/newcerts
+
+certificate 			= \$dir/cacert.pem
+serial 				= \$dir/serial
+crl 				= \$dir/crl.pem
+private_key 			= \$dir/private/cakey.pem
+
+x509_extensions                 = sym_ext
+
+default_days			= 365
+default_crl_days		= 7
+default_md			= sha512
+preserve                        = no
+
+policy                          = policy_match
+
+######################################################
+[ x509v3_FQDN ]
+subjectAltName=DNS:DOM
+
+######################################################
+[ policy_match ]
+countryName			= match
+stateOrProvinceName		= match
+organizationName		= match
+organizationalUnitName		= optional
+commonName			= supplied
+emailAddress			= optional
+
+######################################################
+[ req ]
+default_bits			= 4096
+default_keyfile			= privkey.pem
+distinguished_name		= req_distinguished_name
+attributes			= req_attributes
+x509_extensions			= v3_ca
+
+string_mask			= nombstr
+
+######################################################
+[ req_distinguished_name ]
+countryName			= Country Name (2 letter code)
+countryName_default		= DE
+countryName_min			= 2
+countryName_max			= 2
+
+stateOrProvinceName             = State or Province Name (full name)
+stateOrProvinceName_default     = Nordrhein-Westfalen
+
+0.organizationName		= Organization Name (eg, company)
+0.organizationName_default	= ORG
+
+#organizationalUnitName          = Organizational Unit Name (eg, section)
+#organizationalUnitName_default  = Ministry of Truth
+
+commonName			= Common Name (eg, YOUR name)
+commonName_max			= 64
+commonName_default		= ROOT CA Certificate
+
+emailAddress			= Email Address
+emailAddress_max		= 40
+emailAddress_default		= rootca@DOM
+
+######################################################
+[ req_attributes ]
+# nothing ;-)
+
+######################################################
+[ ocsp_responder_ext ]
+
+# These extensions are added when a ocsp-server certificate is issued
+keyUsage			= digitalSignature, keyEncipherment, keyAgreement
+extendedKeyUsage		= OCSPSigning
+subjectKeyIdentifier		= hash
+authorityKeyIdentifier		= keyid,issuer:always
+subjectAltName			= email:copy
+issuerAltName			= issuer:copy
+crlDistributionPoints   	= URI:http://crl.DOM
+nsCertType			= server
+nsComment			= "This is a OCSP test certificate!"
+
+######################################################
+[ user_ext ]
+
+# These extensions are added when a user certificate is issued
+keyUsage			= digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage		= clientAuth, emailProtection, 1.3.6.1.4.1.311.20.2.2
+subjectKeyIdentifier		= hash
+authorityKeyIdentifier		= keyid,issuer:always
+subjectAltName			= email:copy
+issuerAltName			= issuer:copy
+crlDistributionPoints		= URI:http://crl.DOM
+nsCertType			= client, email
+nsComment			= "This is a USER test certificate!"
+authorityInfoAccess		= OCSP;URI:http://ocsp.DOM
+
+######################################################
+[ server_ext ]
+
+# These extensions are added when a server certificate is issued
+keyUsage			= digitalSignature, keyEncipherment, keyAgreement
+extendedKeyUsage		= serverAuth
+subjectKeyIdentifier		= hash
+authorityKeyIdentifier		= keyid,issuer:always
+subjectAltName			= email:copy
+issuerAltName			= issuer:copy
+crlDistributionPoints   	= URI:http://crl.DOM
+nsCertType			= server
+nsComment			= "This is a SERVER test certificate!"
+authorityInfoAccess		= OCSP;URI:http://ocsp.DOM
+
+######################################################
+[ sym_ext ]
+keyUsage                        = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage                = clientAuth, emailProtection
+subjectKeyIdentifier            = hash
+authorityKeyIdentifier          = keyid,issuer:always
+subjectAltName                  = email:copy
+issuerAltName                   = issuer:copy
+crlDistributionPoints           = URI:http://crl.DOM
+nsCertType                      = client, email, objsign
+nsComment                       = "Monkey Laboratory Certificate"
+authorityInfoAccess             = OCSP;URI:http://ocsp.DOM
+nsCaPolicyUrl                   = http://DOM/ssl/policy.html
+
+
+######################################################
+[ v3_ca ]
+
+# These extensions are added when 'RootCA' _signs_ itself.
+basicConstraints		= critical, CA:TRUE
+keyUsage			= cRLSign, keyCertSign, keyEncipherment, nonRepudiation, digitalSignature
+subjectKeyIdentifier		= hash
+authorityKeyIdentifier		= keyid,issuer:always
+subjectAltName			= email:copy
+issuerAltName			= issuer:copy
+crlDistributionPoints		= URI:http://crl.DOM
+nsCertType			= sslCA, emailCA, objCA
+nsComment			= "This a CA root test certificate!"
+authorityInfoAccess		= OCSP;URI:http://ocsp.DOM
+
+######################################################
+[ crl_ext ]
+
+# CRL extensions.
+# Only issuerAltName and authorityKeyIdentifier make any sense in a CRL.
+issuerAltName			= issuer:copy
+authorityKeyIdentifier		= keyid:always,issuer:always
+
 EOF
 }
 
@@ -289,7 +376,7 @@ check_variables () {
 }
 
 print_usage () {
-	echo "$0 name.dom \"org name\""
+	echo "$0 <create|delete> name.dom \"org name\""
 }
 
 # Check for openssl template configuration
@@ -300,25 +387,34 @@ check_openssl_cnf_orig () {
 	fi
 }
 
-
 # CA Hierarchy
 # 
 # ROOT CA Certificate
 # O = Organization
 # OU = Organization Unit
 
-DOMAIN=$1
-ORG=$2
+CMD=$1
+DOMAIN=$2
+ORG=$3
 
-check_variables $DOMAIN "$ORG"
-check_openssl_cnf_orig
 
-create_openssl_conf $DOMAIN "$ORG"
-create_CA_folders $DOMAIN
-gen_CA_cert $DOMAIN "$ORG"
-gen_server_cert $DOMAIN
-gen_users $DOMAIN
-gen_CRL
-gen_ocsp_responder $DOMAIN
+case $CMD in
+    create)
+	check_variables $DOMAIN "$ORG"
+	check_openssl_cnf_orig
 
+	create_openssl_conf $DOMAIN "$ORG"
+	create_CA_folders $DOMAIN
+	gen_CA_cert $DOMAIN "$ORG"
+	gen_server_cert $DOMAIN
+	gen_users $DOMAIN
+	gen_CRL
+	gen_ocsp_responder $DOMAIN
+	;;
+    delete)
+	;;
+    *)
+	print_usage
+	;;
+esac
 
