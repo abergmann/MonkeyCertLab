@@ -1,111 +1,111 @@
 #!/bin/bash
 
 create_openssl_conf () {
-	cp openssl.cnf.orig openssl.cnf
-	CAPWD=$(echo $PWD | sed 's/\//\\\//g')
-	sed "s/CAPWD/$CAPWD/" -i openssl.cnf
-	sed "s/DOM/$1/g" -i openssl.cnf
-	sed "s/ORG/$2/g" -i openssl.cnf
-}
-
-create_CA_folders () {
 	if [ -d $1 ]; then
 		rm -r $1
 	fi
-	mkdir $1
-	mkdir $1/private
-	chmod 700 $1/private
-	mkdir $1/certs
-	mkdir $1/newcerts
-	echo "01" > $1/serial
-	touch $1/index.txt
+	mkdir -p $1
+	cp openssl.cnf.orig $1/openssl.cnf
+	CAPWD=$(echo $PWD | sed 's/\//\\\//g')
+	sed "s/CAPWD/$CAPWD/" -i $1/openssl.cnf
+	sed "s/DOM/$1/g" -i $1/openssl.cnf
+	sed "s/ORG/$2/g" -i $1/openssl.cnf
+}
+
+create_CA_folders () {
+	mkdir -p $1/ca/private
+	chmod 700 $1/ca/private
+	mkdir -p $1/ca/certs
+	mkdir -p $1/ca/newcerts
+	echo "01" > $1/ca/serial
+	touch $1/ca/index.txt
 
 }
 
 # create CA Root Certificate Private Key
 gen_CA_cert () {
-	openssl genrsa -out $1/private/cakey.pem 2048
-	openssl req -batch -new -x509 -days 3650 -key $1/private/cakey.pem -out $1/cacert.pem -config openssl.cnf
+	openssl genrsa -out $1/ca/private/cakey.pem 2048
+	openssl req -batch -new -x509 -days 3650 -key $1/ca/private/cakey.pem -out $1/ca/cacert.pem -config $1/openssl.cnf
 }
 
 gen_server_cert () {
-	if [ -d server ]; then
-		rm -r server
+	if [ -d $1/server ]; then
+		rm -r $1/server
 	fi
-	mkdir server
-	SUBJECT=`openssl x509 -noout -subject -in $1/cacert.pem`
+	mkdir $1/server
+	SUBJECT=`openssl x509 -noout -subject -in $1/ca/cacert.pem`
 	SUBJECT=${SUBJECT#* }
 	SUBJECT="${SUBJECT%%CN*}CN=www.$1/emailAddress=webmaster@$1"
 	#echo "${SUBJECT}"
-	openssl genrsa -out server/www.key 2048
-	openssl req -batch -new -subj "$SUBJECT" -key server/www.key -out server/www.req -config openssl.cnf
-	openssl ca -batch -name "server" -in server/www.req -out server/www.pem -config openssl.cnf
+	openssl genrsa -out $1/server/www.key 2048
+	openssl req -batch -new -subj "$SUBJECT" -key $1/server/www.key -out $1/server/www.req -config $1/openssl.cnf
+	openssl ca -batch -name "server" -in $1/server/www.req -out $1/server/www.pem -config $1/openssl.cnf
 
 }
 
 gen_user_cert () {
-	SUBJECT=`openssl x509 -noout -subject -in $1/cacert.pem`
+	SUBJECT=`openssl x509 -noout -subject -in $1/ca/cacert.pem`
 	SUBJECT=${SUBJECT#* }
 	SUBJECT="${SUBJECT%%CN*}CN=$2/emailAddress=$2@$1"
-	STARTDATE=`openssl x509 -noout -startdate -in $1/cacert.pem`
+	STARTDATE=`openssl x509 -noout -startdate -in $1/ca/cacert.pem`
 	STARTDATE=${STARTDATE#*=}
 	STARTDATEZ=`date -u -d "$STARTDATE" +%y%m%d%H%M%SZ`
 	ENDDATESEC=`date -u -d "$STARTDATE" +%s`
 	ENDDATESEC2=$(($ENDDATESEC+31536000))
 	ENDDATEZ=`date -u -d "1970-01-01 UTC $ENDDATESEC2 seconds" +%y%m%d%H%M%SZ`
-	openssl genrsa -out user/$2.key 2048
-	openssl req -batch -new -subj "$SUBJECT" -key user/$2.key -out user/$2.req -config openssl.cnf
+	openssl genrsa -out $1/user/$2.key 2048
+	openssl req -batch -new -subj "$SUBJECT" -key $1/user/$2.key -out $1/user/$2.req -config $1/openssl.cnf
 	case $3 in
 	  valid)
 		STARTDATE=`date -u -d "$STARTDATE" +%y%m%d%H%M%SZ`
-		openssl ca -batch -name "user" -startdate $STARTDATEZ -enddate $ENDDATEZ -in user/$2.req -out user/$2.pem -config openssl.cnf
+		openssl ca -batch -name "user" -startdate $STARTDATEZ -enddate $ENDDATEZ -in $1/user/$2.req -out $1/user/$2.pem -config $1/openssl.cnf
 		;;
 	  expired)
 		ENDDATESEC2=$(($ENDDATESEC+1))
 		ENDDATEZ=`date -u -d "1970-01-01 UTC $ENDDATESEC2 seconds" +%y%m%d%H%M%SZ`
-		openssl ca -batch -name "user" -startdate $STARTDATEZ -enddate $ENDDATEZ -in user/$2.req -out user/$2.pem -config openssl.cnf
+		openssl ca -batch -name "user" -startdate $STARTDATEZ -enddate $ENDDATEZ -in $1/user/$2.req -out $1/user/$2.pem -config $1/openssl.cnf
 		sleep 1
-		openssl ca -config openssl.cnf -updatedb
+		openssl ca -config $1/openssl.cnf -updatedb
 		;;
 	  revoked)
-		openssl ca -batch -name "user" -startdate $STARTDATEZ -enddate $ENDDATEZ -in user/$2.req -out user/$2.pem -config openssl.cnf
-		openssl ca -config openssl.cnf -revoke user/$2.pem
+		openssl ca -batch -name "user" -startdate $STARTDATEZ -enddate $ENDDATEZ -in $1/user/$2.req -out $1/user/$2.pem -config $1/openssl.cnf
+		openssl ca -config $1/openssl.cnf -revoke $1/user/$2.pem
 		;;
 	esac
 }
 
 gen_users () {
-	if [ -d user ]; then
-		rm -r user
+	if [ -d $1/user ]; then
+		rm -r $1/user
 	fi
-	mkdir user
+	mkdir -p $1/user
 	gen_user_cert $1 user1 valid
 	gen_user_cert $1 user2 expired
 	gen_user_cert $1 user3 revoked
 }
 
 gen_CRL () {
-	if [ -d crl ]; then
-		rm -r crl
+	if [ -d $1/crl ]; then
+		rm -r $1/crl
 	fi
-	mkdir crl
+	mkdir $1/crl
 	DATE=`date -u +%y%m%d%H%M%S`
-	openssl ca -gencrl -config openssl.cnf -out crl/crl-$DATE.pem
-	ln -sf crl-$DATE.pem crl/crl.pem
+	openssl ca -gencrl -config $1/openssl.cnf -out $1/crl/crl-$DATE.pem
+	ln -sf crl-$DATE.pem $1/crl/crl.pem
 }
 
 gen_ocsp_responder () {
-	if [ -d ocsp ]; then
-		rm -r ocsp
+	if [ -d $1/ocsp ]; then
+		rm -r $1/ocsp
 	fi
-	mkdir ocsp
-	SUBJECT=`openssl x509 -noout -subject -in $1/cacert.pem`
+	mkdir $1/ocsp
+	SUBJECT=`openssl x509 -noout -subject -in $1/ca/cacert.pem`
 	SUBJECT=${SUBJECT#* }
 	SUBJECT="${SUBJECT%%CN*}CN=ocsp.$1/emailAddress=ocsp@$1"
 	#echo "${SUBJECT}"
-	openssl genrsa -out ocsp/ocsp.key 2048
-	openssl req -batch -new -subj "$SUBJECT" -key ocsp/ocsp.key -out ocsp/ocsp.req -config openssl.cnf
-	openssl ca -batch -name "ocsp_responder" -in ocsp/ocsp.req -out ocsp/ocsp.pem -config openssl.cnf
+	openssl genrsa -out $1/ocsp/ocsp.key 2048
+	openssl req -batch -new -subj "$SUBJECT" -key $1/ocsp/ocsp.key -out $1/ocsp/ocsp.req -config $1/openssl.cnf
+	openssl ca -batch -name "ocsp_responder" -in $1/ocsp/ocsp.req -out $1/ocsp/ocsp.pem -config $1/openssl.cnf
 
 }
 
@@ -113,7 +113,7 @@ create_openssl_conf_orig () {
 	cat > openssl.cnf.orig << EOF
 ######################################################
 # OpenSSL config Template
-# last modification: 2013-08-15
+# last modification: 2015-05-10
 ######################################################
 #
 # +CA
@@ -125,7 +125,8 @@ create_openssl_conf_orig () {
 ######################################################
 
 SSL				= CAPWD
-RANDFILE			= \$SSL/DOM/private/.rand
+RANDFILE			= \$SSL/DOM/ca/private/.rand
+default_md                      = sha512
 
 ######################################################
 [ ca ]
@@ -134,7 +135,7 @@ default_ca 			= user
 ######################################################
 [ user ]
 
-dir				= \$SSL/DOM
+dir				= \$SSL/DOM/ca
 certs				= \$dir/certs
 crl_dir				= \$dir/crl
 database			= \$dir/index.txt
@@ -157,7 +158,7 @@ policy				= policy_match
 ######################################################
 [ server ]
 
-dir				= \$SSL/DOM
+dir				= \$SSL/DOM/ca
 certs				= \$dir/certs
 crl_dir				= \$dir/crl
 database			= \$dir/index.txt
@@ -180,7 +181,7 @@ policy				= policy_match
 ######################################################
 [ ocsp_responder ]
 
-dir				= \$SSL/DOM
+dir				= \$SSL/DOM/ca
 certs				= \$dir/certs
 crl_dir				= \$dir/crl
 database			= \$dir/index.txt
@@ -202,7 +203,7 @@ policy 				= policy_match
 
 ######################################################
 [ symbian ]
-dir				= \$SSL/DOM
+dir				= \$SSL/DOM/ca
 certs				= \$dir/certs
 crl_dir				= \$dir/crl
 database			= \$dir/index.txt
@@ -406,9 +407,10 @@ case $CMD in
 	create_openssl_conf $DOMAIN "$ORG"
 	create_CA_folders $DOMAIN
 	gen_CA_cert $DOMAIN "$ORG"
+	exit
 	gen_server_cert $DOMAIN
 	gen_users $DOMAIN
-	gen_CRL
+	gen_CRL $DOMAIN
 	gen_ocsp_responder $DOMAIN
 	;;
     delete)
