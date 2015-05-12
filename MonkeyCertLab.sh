@@ -407,7 +407,6 @@ case $CMD in
 	create_openssl_conf $DOMAIN "$ORG"
 	create_CA_folders $DOMAIN
 	gen_CA_cert $DOMAIN "$ORG"
-	exit
 	gen_server_cert $DOMAIN
 	gen_users $DOMAIN
 	gen_CRL $DOMAIN
