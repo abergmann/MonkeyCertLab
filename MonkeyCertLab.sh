@@ -19,7 +19,7 @@ create_CA_folders () {
 	mkdir -p $1/ca/newcerts
 	echo "01" > $1/ca/serial
 	touch $1/ca/index.txt
-
+	echo "unique_subject = yes" > $1/ca/index.txt.attr
 }
 
 # create CA Root Certificate Private Key
@@ -29,24 +29,25 @@ gen_CA_cert () {
 }
 
 gen_server_cert () {
-	if [ -d $1/server ]; then
-		rm -r $1/server
-	fi
-	mkdir $1/server
+	mkdir -p $1/server
 	SUBJECT=`openssl x509 -noout -subject -in $1/ca/cacert.pem`
-	SUBJECT=${SUBJECT#* }
-	SUBJECT="${SUBJECT%%CN*}CN=www.$1/emailAddress=webmaster@$1"
+        SUBJECT=${SUBJECT#*=}
+        SUBJECT="${SUBJECT%%CN*}CN=$2.$1/emailAddress=hostmaster@$1"
+        SUBJECT="${SUBJECT// = /=}"
+        SUBJECT="/${SUBJECT//, //}"
 	#echo "${SUBJECT}"
-	openssl genrsa -out $1/server/www.key 2048
-	openssl req -batch -new -subj "$SUBJECT" -key $1/server/www.key -out $1/server/www.req -config $1/openssl.cnf
-	openssl ca -batch -name "server" -in $1/server/www.req -out $1/server/www.pem -config $1/openssl.cnf
+	openssl genrsa -out $1/server/$2.key 2048
+	openssl req -batch -new -subj "$SUBJECT" -key $1/server/$2.key -out $1/server/$2.req -config $1/openssl.cnf
+	openssl ca -batch -name "server" -in $1/server/$2.req -out $1/server/$2.pem -config $1/openssl.cnf
 
 }
 
 gen_user_cert () {
 	SUBJECT=`openssl x509 -noout -subject -in $1/ca/cacert.pem`
-	SUBJECT=${SUBJECT#* }
-	SUBJECT="${SUBJECT%%CN*}CN=$2/emailAddress=$2@$1"
+        SUBJECT=${SUBJECT#*=}
+        SUBJECT="${SUBJECT%%CN*}CN=$2/emailAddress=$2@$1"
+        SUBJECT="${SUBJECT// = /=}"
+        SUBJECT="/${SUBJECT//, //}"
 	STARTDATE=`openssl x509 -noout -startdate -in $1/ca/cacert.pem`
 	STARTDATE=${STARTDATE#*=}
 	STARTDATEZ=`date -u -d "$STARTDATE" +%y%m%d%H%M%SZ`
@@ -75,9 +76,6 @@ gen_user_cert () {
 }
 
 gen_users () {
-	if [ -d $1/user ]; then
-		rm -r $1/user
-	fi
 	mkdir -p $1/user
 	gen_user_cert $1 user1 valid
 	gen_user_cert $1 user2 expired
@@ -85,23 +83,19 @@ gen_users () {
 }
 
 gen_CRL () {
-	if [ -d $1/crl ]; then
-		rm -r $1/crl
-	fi
-	mkdir $1/crl
+	mkdir -p $1/crl
 	DATE=`date -u +%y%m%d%H%M%S`
 	openssl ca -gencrl -config $1/openssl.cnf -out $1/crl/crl-$DATE.pem
 	ln -sf crl-$DATE.pem $1/crl/crl.pem
 }
 
 gen_ocsp_responder () {
-	if [ -d $1/ocsp ]; then
-		rm -r $1/ocsp
-	fi
-	mkdir $1/ocsp
+	mkdir -p $1/ocsp
 	SUBJECT=`openssl x509 -noout -subject -in $1/ca/cacert.pem`
-	SUBJECT=${SUBJECT#* }
+        SUBJECT=${SUBJECT#*=}
 	SUBJECT="${SUBJECT%%CN*}CN=ocsp.$1/emailAddress=ocsp@$1"
+        SUBJECT="${SUBJECT// = /=}"
+        SUBJECT="/${SUBJECT//, //}"
 	#echo "${SUBJECT}"
 	openssl genrsa -out $1/ocsp/ocsp.key 2048
 	openssl req -batch -new -subj "$SUBJECT" -key $1/ocsp/ocsp.key -out $1/ocsp/ocsp.req -config $1/openssl.cnf
@@ -401,13 +395,15 @@ ORG=$3
 
 case $CMD in
     create)
+	# Create CA directory
 	check_variables $DOMAIN "$ORG"
 	check_openssl_cnf_orig
 
 	create_openssl_conf $DOMAIN "$ORG"
 	create_CA_folders $DOMAIN
 	gen_CA_cert $DOMAIN "$ORG"
-	gen_server_cert $DOMAIN
+	gen_server_cert $DOMAIN www
+	gen_server_cert $DOMAIN mail
 	gen_users $DOMAIN
 	gen_CRL $DOMAIN
 	gen_ocsp_responder $DOMAIN
