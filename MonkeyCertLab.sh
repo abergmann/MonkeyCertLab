@@ -103,6 +103,10 @@ gen_ocsp_responder () {
 
 }
 
+test_function () {
+	echo "this is test_function";
+}
+		
 create_openssl_conf_orig () {
 	cat > openssl.cnf.orig << EOF
 ######################################################
